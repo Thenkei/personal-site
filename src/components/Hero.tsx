@@ -1,4 +1,4 @@
-import { profile } from '../content';
+import { blog, profile } from '../content';
 import { TopoMap } from './TopoMap';
 
 interface Props {
@@ -42,8 +42,8 @@ export function Hero({ seed, onRegenerate }: Props) {
               →
             </span>
           </a>
-          <a href="#route" className="link-underline text-sm font-medium text-ink">
-            See the route
+          <a href={blog.url} className="link-underline text-sm font-medium text-ink">
+            Read the blog
           </a>
         </div>
       </div>
