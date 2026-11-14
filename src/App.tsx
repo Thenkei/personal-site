@@ -2,6 +2,7 @@ import { Fragment, useState, type ReactNode } from 'react';
 import { blog, offTrail, profile, toolkit } from './content';
 import { Hero } from './components/Hero';
 import { Route } from './components/Route';
+import { SideProjects } from './components/SideProjects';
 import { Writing } from './components/Writing';
 import { ThemeToggle } from './components/ThemeToggle';
 import { TrailBlaze } from './components/TrailBlaze';
@@ -10,11 +11,13 @@ const randomSeed = () => Math.floor(Math.random() * 9000) + 1000;
 /** Every visit gets its own map. Module scope keeps render pure. */
 const INITIAL_SEED = randomSeed();
 
+/** `wide`: shown from the `sm` breakpoint up only, so the bar fits a phone. */
 const NAV = [
-  { href: '#route', label: 'Career' },
-  { href: '#toolkit', label: 'Toolkit' },
-  { href: '#writing', label: 'Writing' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#route', label: 'Career', wide: false },
+  { href: '#toolkit', label: 'Toolkit', wide: true },
+  { href: '#projects', label: 'Projects', wide: true },
+  { href: '#writing', label: 'Writing', wide: false },
+  { href: '#contact', label: 'Contact', wide: false },
 ] as const;
 
 function Section({ id, index, title, children }: { id: string; index: string; title: string; children: ReactNode }) {
@@ -52,7 +55,11 @@ export default function App() {
           </a>
           <nav className="flex items-center gap-1 sm:gap-4" aria-label="Main">
             {NAV.map((item) => (
-              <a key={item.href} href={item.href} className="rounded-full px-2.5 py-1.5 text-sm text-ink-2 transition-colors hover:text-ink">
+              <a
+                key={item.href}
+                href={item.href}
+                className={`rounded-full px-2.5 py-1.5 text-sm text-ink-2 transition-colors hover:text-ink ${item.wide ? 'hidden sm:inline' : ''}`}
+              >
                 {item.label}
               </a>
             ))}
@@ -126,14 +133,22 @@ export default function App() {
           <hr className="border-rule" />
         </div>
 
-        <Section id="writing" index="03" title="Latest articles">
+        <Section id="projects" index="03" title="Side projects">
+          <SideProjects />
+        </Section>
+
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <hr className="border-rule" />
+        </div>
+
+        <Section id="writing" index="04" title="Latest articles">
           <Writing />
         </Section>
 
         <section id="contact" className="band scroll-mt-20 py-24 md:py-32" aria-labelledby="contact-title">
           <div className="mx-auto max-w-6xl px-5 md:px-8">
             <p className="mb-3 font-mono text-xs opacity-60">
-              <span className="text-accent">04</span>
+              <span className="text-accent">05</span>
             </p>
             <h2 id="contact-title" className="font-display text-[clamp(3rem,10vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
               Let’s <em className="font-serif font-normal italic tracking-[-0.01em] text-accent">talk.</em>

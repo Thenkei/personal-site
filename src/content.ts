@@ -159,6 +159,68 @@ export const toolkit: { practice: readonly string[]; stack: readonly StackGroup[
   ],
 };
 
+export interface SideProject {
+  name: string;
+  /** Free text: a year, or a period like "High school". */
+  when: string;
+  description: string;
+  tags: readonly string[];
+  link?: {
+    label: string;
+    href: string;
+    /** ISO date. The link is hidden before it, e.g. for a blog post that is scheduled but not yet published. */
+    from?: string;
+  };
+}
+
+/** Newest first. */
+export const sideProjects: readonly SideProject[] = [
+  {
+    name: 'Short films',
+    when: '2026',
+    description: 'Animated short films made from my blog articles, with the same characters in every episode.',
+    tags: ['Remotion', 'Agents'],
+    link: { label: 'Read about it', href: 'https://thenkei.github.io/blog/en/posts/short-films-series', from: '2026-12-14' },
+  },
+  {
+    name: 'Jokarikara',
+    when: '2026',
+    description: 'A rhythm game for mobile: stack shapes by tapping at the right moment. My first personal project built with AI.',
+    tags: ['React', 'TypeScript', 'Canvas'],
+    link: { label: 'Read about it', href: 'https://thenkei.github.io/blog/en/posts/jokarikara-first-ai-project' },
+  },
+  {
+    name: 'Chuchoter',
+    when: '2026',
+    description:
+      'Speech-to-text that runs locally on macOS, from the menu bar, with whisper.cpp. Part of my speech-to-text and text-to-speech experiments.',
+    tags: ['Swift', 'Rust', 'whisper.cpp'],
+    link: { label: 'GitHub', href: 'https://github.com/Thenkei/chuchoter' },
+  },
+  {
+    name: 'OverTheLimits',
+    when: '2019',
+    description: 'A neural network bot that learns to pick the winning card in Under the Limit.',
+    tags: ['C++', 'Neural network'],
+    link: { label: 'GitHub', href: 'https://github.com/Thenkei/OverTheLimits' },
+  },
+  {
+    name: 'Under the Limit',
+    when: '2018',
+    description:
+      'An open-source online card game, built for a friend. Its WebSocket code later ran the games we played during lockdown.',
+    tags: ['Node.js', 'WebSockets', 'Kubernetes'],
+    link: { label: 'GitHub', href: 'https://github.com/Thenkei/UnderTheLimits' },
+  },
+  {
+    name: 'HeavenCraft',
+    when: 'High school',
+    description: 'A French Minecraft server. The first time thousands of people used something I built.',
+    tags: ['Minecraft', 'Community'],
+    link: { label: 'Read about it', href: 'https://thenkei.github.io/blog/en/posts/heavencraft-first-systems' },
+  },
+];
+
 export interface OffTrailItem {
   term: string;
   detail: string;
