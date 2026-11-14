@@ -22,7 +22,7 @@ Everything the site says lives in `src/content.ts`:
 
 - `profile`: name, headline, pitch, status, contact links, location.
 - `legs`: organisations (work or study), most recent first, each with `roles` (oldest first).
-- `toolkit`: `practice` and `stack` lists for the Toolkit section.
+- `toolkit`: `practice` list and `stack` grouped by domain (`{ group, items }`) for the Toolkit section.
 - `offTrail`: term/detail pairs shown alongside the toolkit.
 
 Each `Role` has an `elevation` (0 to 1) that sets its height on the career elevation profile. Roles are flattened across all legs and sorted automatically by `start`, so you never order or lay out the profile by hand: add a role with an `elevation` and it appears in both the profile and the route log (linked by `Role.id`). Omit `end` for the current role.

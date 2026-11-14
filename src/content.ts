@@ -52,7 +52,7 @@ export const legs: readonly Leg[] = [
     kind: 'work',
     summary:
       'Building a new private wealth management experience. Interconnecting with key partners to design future-proof, scalable private banking products — with AI where it genuinely helps.',
-    tags: ['Architecture', 'Partner integrations', 'AI'],
+    tags: ['TypeScript', 'NestJS', 'Python', 'Dagster', 'Snowflake', 'AWS', 'LLMs'],
     roles: [{ id: 'rockfi-staff', title: 'Staff Engineer', start: '2024-11', elevation: 0.96 }],
   },
   {
@@ -88,23 +88,45 @@ export const legs: readonly Leg[] = [
   },
 ];
 
-export const toolkit = {
-  practice: ['Software design', 'Solution architecture', 'Team leadership', 'NLP', '3D reconstruction'],
-  stack: [
-    'TypeScript',
-    'Node.js',
-    'PostgreSQL',
-    'Redis',
-    'Fastify',
-    'Koa',
-    'Express',
-    'GraphQL',
-    'Ember.js',
-    'Docker',
-    'AWS',
-    'GitHub Actions',
+export interface StackGroup {
+  group: string;
+  items: readonly string[];
+}
+
+export const toolkit: { practice: readonly string[]; stack: readonly StackGroup[] } = {
+  practice: [
+    'Software design',
+    'Solution architecture',
+    'Domain-driven design',
+    'Data platforms',
+    'AI & LLM products',
+    'Team leadership',
+    'NLP',
+    '3D reconstruction',
   ],
-} as const;
+  stack: [
+    {
+      group: 'Backend',
+      items: ['TypeScript', 'Node.js', 'NestJS', 'Prisma', 'PostgreSQL', 'Redis', 'BullMQ', 'Zod', 'GraphQL', 'Fastify', 'Koa', 'Express'],
+    },
+    {
+      group: 'Data',
+      items: ['Python', 'Dagster', 'dbt', 'Airbyte', 'dlt', 'Snowflake', 'Polars', 'Redpanda'],
+    },
+    {
+      group: 'AI',
+      items: ['Vercel AI SDK', 'Amazon Bedrock', 'Opik', 'Claude Code & MCP'],
+    },
+    {
+      group: 'Front & mobile',
+      items: ['React', 'Next.js', 'React Native', 'Expo', 'Tailwind CSS', 'Ember.js'],
+    },
+    {
+      group: 'Cloud & ops',
+      items: ['AWS', 'Terraform', 'Kubernetes', 'Docker', 'GitHub Actions', 'OpenTelemetry', 'Grafana', 'Sentry'],
+    },
+  ],
+};
 
 export const offTrail = [
   { term: 'Weekends', detail: 'Trail running & mountain biking' },
