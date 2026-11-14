@@ -19,6 +19,13 @@ export function formatShort(date: PartialDate): string {
   return month ? `${month} ’${year.slice(2)}` : year;
 }
 
+/** ISO day `2026-11-13` → `13 Nov 2026`. Empty string for anything unparseable. */
+export function formatDay(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m) return '';
+  return `${Number(m[3])} ${MONTHS[Number(m[2]) - 1]} ${m[1]}`;
+}
+
 export function formatRange(start: PartialDate, end?: PartialDate): string {
   return `${formatDate(start)} — ${end ? formatDate(end) : 'now'}`;
 }
