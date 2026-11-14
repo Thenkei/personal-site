@@ -1,4 +1,4 @@
-import { useId, useMemo } from 'react';
+import { useId, useMemo, useState } from 'react';
 
 export interface Waypoint {
   id: string;
@@ -14,20 +14,27 @@ interface Props {
 }
 
 const W = 1000;
-const H = 240;
-/** Horizontal inset — wide enough that centred axis labels never overflow on phones. */
+const H = 340;
+/** Left inset — wide enough that centred axis labels never overflow on phones. */
 const PAD = 72;
-const TOP = 28;
-const BASE = 196;
+/** Width reserved right of the last checkpoint for the forecast. */
+const FUTURE = 190;
+/** Headroom above the highest checkpoint, where the forecast escapes to. */
+const TOP = 190;
+const BASE = 300;
+const MOON = { x: W - 40, y: 34, r: 22 } as const;
+/** Steepness of the forecast. Higher = flatter start, more violent finish. */
+const GROWTH = 5.5;
 
 interface Pt {
   x: number;
   y: number;
 }
 
-/** Catmull-Rom → cubic Bézier: a smooth curve that passes through every point. */
-function smoothPath(pts: readonly Pt[]): string {
-  let d = `M${pts[0].x},${pts[0].y}`;
+/** Catmull-Rom → cubic Bézier segments: a smooth curve through every point. */
+function smoothSegments(pts: readonly Pt[]): string[] {
+  const segs: string[] = [];
+  const f = (n: number) => n.toFixed(1);
   for (let i = 0; i < pts.length - 1; i++) {
     const p0 = pts[i - 1] ?? pts[i];
     const p1 = pts[i];
@@ -35,9 +42,9 @@ function smoothPath(pts: readonly Pt[]): string {
     const p3 = pts[i + 2] ?? p2;
     const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
     const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
-    d += `C${c1.x.toFixed(1)},${c1.y.toFixed(1)} ${c2.x.toFixed(1)},${c2.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)}`;
+    segs.push(`C${f(c1.x)},${f(c1.y)} ${f(c2.x)},${f(c2.y)} ${f(p2.x)},${f(p2.y)}`);
   }
-  return d;
+  return segs;
 }
 
 /** Deterministic pseudo-noise in [-1, 1] — stable across renders, no PRNG state. */
@@ -49,37 +56,64 @@ const noise = (n: number) => {
 /**
  * Career drawn as a trail's elevation profile. Checkpoints are evenly spaced
  * (stages, not a time axis) and their height is the role's `elevation`.
+ * Past the last checkpoint, a dashed exponential forecast heads for the moon —
+ * hover (or tap) it for the easter egg.
  */
 export function ElevationProfile({ waypoints, activeId, currentId, onActive }: Props) {
   const hatchId = useId();
-  const step = (W - 2 * PAD) / Math.max(1, waypoints.length - 1);
+  const [dreaming, setDreaming] = useState(false);
+  const step = (W - FUTURE - PAD) / Math.max(1, waypoints.length - 1);
 
-  const { points, line, area } = useMemo(() => {
+  const { points, history, forecast, area } = useMemo(() => {
     const points = waypoints.map((w, i) => ({ x: PAD + i * step, y: BASE - w.elevation * (BASE - TOP) }));
+    const last = points[points.length - 1];
 
-    // Add small undulations between checkpoints so it reads as terrain, not a chart.
-    const dense: Pt[] = [{ x: 0, y: points[0].y + 14 }];
+    // Small undulations between checkpoints so it reads as terrain, not a chart.
+    const past: Pt[] = [{ x: 0, y: points[0].y + 14 }];
     points.forEach((p, i) => {
-      dense.push(p);
+      past.push(p);
       const next = points[i + 1];
       if (!next) return;
       for (let k = 1; k < 4; k++) {
         const t = k / 4;
-        dense.push({ x: p.x + (next.x - p.x) * t, y: p.y + (next.y - p.y) * t + noise(i * 4 + k) * 9 });
+        past.push({ x: p.x + (next.x - p.x) * t, y: p.y + (next.y - p.y) * t + noise(i * 4 + k) * 9 });
       }
     });
-    const last = points[points.length - 1];
-    dense.push({ x: W, y: last.y + 10 });
 
-    const line = smoothPath(dense);
-    return { points, line, area: `${line}L${W},${H}L0,${H}Z` };
+    // Exponential from the last checkpoint straight into the moon.
+    const future: Pt[] = [];
+    const norm = Math.exp(GROWTH) - 1;
+    for (let k = 1; k <= 14; k++) {
+      const t = k / 14;
+      const climb = (Math.exp(GROWTH * t) - 1) / norm;
+      future.push({ x: last.x + (MOON.x - last.x) * t, y: last.y - (last.y - MOON.y) * climb });
+    }
+
+    // One spline over past + future keeps the join tangent-continuous; split it after.
+    const segs = smoothSegments([...past, ...future]);
+    const split = past.length - 1;
+    const start = `M${past[0].x},${past[0].y}`;
+    const history = start + segs.slice(0, split).join('');
+    return {
+      points,
+      history,
+      forecast: `M${last.x},${last.y}` + segs.slice(split).join(''),
+      area: `${history}L${last.x},${H}L0,${H}Z`,
+    };
   }, [waypoints, step]);
 
+  const last = points[points.length - 1];
   const summary = waypoints.map((w) => w.label).join(', ');
+  const pct = (x: number, axis: number) => `${(x / axis) * 100}%`;
 
   return (
     <div className="relative select-none">
-      <svg viewBox={`0 0 ${W} ${H}`} className="block h-auto w-full" role="img" aria-label={`Career elevation profile with checkpoints: ${summary}`}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="block h-auto w-full overflow-visible"
+        role="img"
+        aria-label={`Career elevation profile with checkpoints: ${summary}, then a forecast heading for the moon`}
+      >
         <defs>
           <pattern id={hatchId} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
             <line x1="0" y1="0" x2="0" y2="7" className="stroke-line-strong" strokeWidth="1.2" />
@@ -87,7 +121,25 @@ export function ElevationProfile({ waypoints, activeId, currentId, onActive }: P
         </defs>
 
         <path d={area} fill={`url(#${hatchId})`} />
-        <path d={line} fill="none" className="stroke-ink" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        <path d={history} fill="none" className="stroke-ink" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+
+        {/* --- Forecast ------------------------------------------------------ */}
+        <path
+          d={forecast}
+          fill="none"
+          className={`stroke-accent ${dreaming ? 'forecast-dash--run' : ''}`}
+          strokeWidth="2"
+          strokeDasharray="6 6"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <g className={`moon ${dreaming ? 'moon--lit' : ''}`}>
+          <circle cx={MOON.x} cy={MOON.y} r={MOON.r + 10} className="moon-halo fill-accent" />
+          <circle cx={MOON.x} cy={MOON.y} r={MOON.r} className="fill-paper stroke-ink" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+          <circle cx={MOON.x - 7} cy={MOON.y - 5} r="4.5" className="fill-line-strong" />
+          <circle cx={MOON.x + 6} cy={MOON.y + 7} r="3" className="fill-line-strong" />
+          <circle cx={MOON.x + 8} cy={MOON.y - 8} r="2" className="fill-line-strong" />
+        </g>
 
         {points.map((p, i) => {
           const { id } = waypoints[i];
@@ -127,7 +179,40 @@ export function ElevationProfile({ waypoints, activeId, currentId, onActive }: P
             </g>
           );
         })}
+
+        {/* Easter-egg hit zone: everything right of the current checkpoint. */}
+        <rect
+          x={last.x + step / 2}
+          y={-20}
+          width={W - last.x - step / 2 + 20}
+          height={H + 20}
+          fill="transparent"
+          className="cursor-pointer"
+          // Hover for mice; tap toggles on touch (touch also emits emulated mouse
+          // events, so filtering on pointerType avoids an open-then-close flicker).
+          onPointerEnter={(e) => e.pointerType === 'mouse' && setDreaming(true)}
+          onPointerLeave={(e) => e.pointerType === 'mouse' && setDreaming(false)}
+          onPointerUp={(e) => e.pointerType !== 'mouse' && setDreaming((d) => !d)}
+        />
       </svg>
+
+      {/* Easter egg. Always rendered so it can fade out, hidden from AT when idle. */}
+      <div
+        className={`band pointer-events-none absolute z-10 w-max max-w-[15rem] rounded-xl px-4 py-3 shadow-lg transition-[opacity,transform] duration-300 ${
+          dreaming ? 'opacity-100' : 'opacity-0'
+        }`}
+        style={{
+          left: `calc(${pct(MOON.x - MOON.r, W)} - 14px)`,
+          top: pct(MOON.y, H),
+          transform: `translate(-100%, ${dreaming ? '-50%' : '-20%'})`,
+        }}
+        aria-hidden={!dreaming}
+      >
+        <p className="font-mono text-[10px] uppercase tracking-widest opacity-60">Forecast · 384 400 km</p>
+        <p className="mt-1 font-display text-lg font-semibold leading-tight tracking-[-0.02em]">
+          Dream big. <em className="font-serif font-normal italic text-accent">To the moon.</em>
+        </p>
+      </div>
 
       <div className="relative mt-2 h-4" aria-hidden="true">
         {points.map((p, i) => {
@@ -135,15 +220,21 @@ export function ElevationProfile({ waypoints, activeId, currentId, onActive }: P
           return (
             <span
               key={id}
-              className={`absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[11px] tabular-nums transition-colors ${
+              className={`absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] tracking-tight tabular-nums transition-colors sm:text-[11px] sm:tracking-normal ${
                 id === activeId ? 'text-accent' : 'text-muted'
               }`}
-              style={{ left: `${(p.x / W) * 100}%` }}
+              style={{ left: pct(p.x, W) }}
             >
               {label}
             </span>
           );
         })}
+        <span
+          className={`absolute top-0 -translate-x-1/2 font-mono text-[10px] transition-colors sm:text-[11px] ${dreaming ? 'text-accent' : 'text-muted'}`}
+          style={{ left: pct(MOON.x, W) }}
+        >
+          ∞
+        </span>
       </div>
     </div>
   );
