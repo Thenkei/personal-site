@@ -34,7 +34,7 @@ export const profile = {
   name: { first: 'Morgan', last: 'Perre' },
   headline: 'Staff Engineer at RockFi',
   pitch:
-    'I design software architecture for private wealth management — systems that have to be right, auditable, and still pleasant to change. Weekends, I trade the terminal for trails.',
+    'I work across AI, data, backend and internal tools, and on the technical decisions that go with them. On weekends I run ultra trails.',
   status: 'Open to strategic projects',
   email: 'morgan.perre@gmail.com',
   linkedin: 'https://www.linkedin.com/in/morgan-perre-15295782',
@@ -82,7 +82,7 @@ export const legs: readonly Leg[] = [
     org: 'RockFi',
     kind: 'work',
     summary:
-      'Building a new private wealth management experience. Interconnecting with key partners to design future-proof, scalable private banking products — with AI where it genuinely helps.',
+      'I joined RockFi to build its data platform. Today I work across the whole stack as a staff engineer: AI, data, backend, internal tools, and the technical decisions between them.',
     tags: ['TypeScript', 'NestJS', 'Python', 'Dagster', 'Snowflake', 'AWS', 'LLMs'],
     roles: [{ id: 'rockfi-staff', title: 'Staff Engineer', start: '2024-11', elevation: 0.96 }],
   },
@@ -159,8 +159,18 @@ export const toolkit: { practice: readonly string[]; stack: readonly StackGroup[
   ],
 };
 
-export const offTrail = [
-  { term: 'Weekends', detail: 'Trail running & mountain biking' },
+export interface OffTrailItem {
+  term: string;
+  detail: string;
+  link?: { label: string; href: string };
+}
+
+export const offTrail: readonly OffTrailItem[] = [
+  {
+    term: 'Weekends',
+    detail: 'Ultra trail: 100 km at the Trail du Saint-Jacques in 2026, 140 km planned for 2027. Mountain biking.',
+    link: { label: 'Race report', href: 'https://thenkei.github.io/blog/en/posts/trail-saint-jacques-100k-2026' },
+  },
   { term: 'Base', detail: "La Chapelle-d'Aurec, Auvergne-Rhône-Alpes" },
   { term: 'Languages', detail: 'French (native) · English (full professional) · Italian, Portuguese, Spanish (elementary)' },
-] as const;
+];

@@ -11,18 +11,18 @@ const randomSeed = () => Math.floor(Math.random() * 9000) + 1000;
 const INITIAL_SEED = randomSeed();
 
 const NAV = [
-  { href: '#route', label: 'Route' },
+  { href: '#route', label: 'Career' },
   { href: '#toolkit', label: 'Toolkit' },
   { href: '#writing', label: 'Writing' },
   { href: '#contact', label: 'Contact' },
 ] as const;
 
-function Section({ id, index, kicker, title, children }: { id: string; index: string; kicker: string; title: string; children: ReactNode }) {
+function Section({ id, index, title, children }: { id: string; index: string; title: string; children: ReactNode }) {
   return (
     <section id={id} className="scroll-mt-20 py-20 md:py-28" aria-labelledby={`${id}-title`}>
       <div className="mx-auto max-w-6xl px-5 md:px-8">
         <p className="mb-3 font-mono text-xs text-muted">
-          <span className="text-accent">{index}</span> · {kicker}
+          <span className="text-accent">{index}</span>
         </p>
         <h2 id={`${id}-title`} className="mb-12 font-display text-5xl font-semibold leading-none tracking-[-0.04em] text-ink md:mb-16 md:text-6xl">
           {title}
@@ -64,7 +64,7 @@ export default function App() {
       <main>
         <Hero seed={seed} onRegenerate={() => setSeed(randomSeed())} />
 
-        <Section id="route" index="01" kicker="Route" title="The climb so far">
+        <Section id="route" index="01" title="Career">
           <Route />
         </Section>
 
@@ -72,7 +72,7 @@ export default function App() {
           <hr className="border-rule" />
         </div>
 
-        <Section id="toolkit" index="02" kicker="Toolkit" title="What I carry">
+        <Section id="toolkit" index="02" title="Toolkit">
           <div className="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-16">
             <div>
               <h3 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted">Practice</h3>
@@ -106,10 +106,17 @@ export default function App() {
           </div>
 
           <dl className="mt-20 grid gap-px overflow-hidden rounded-2xl border border-rule bg-rule md:grid-cols-3">
-            {offTrail.map(({ term, detail }) => (
+            {offTrail.map(({ term, detail, link }) => (
               <div key={term} className="bg-paper p-6">
                 <dt className="mb-2 font-mono text-xs uppercase tracking-widest text-muted">{term}</dt>
-                <dd className="leading-relaxed text-ink">{detail}</dd>
+                <dd className="leading-relaxed text-ink">
+                  {detail}
+                  {link && (
+                    <a href={link.href} className="link-underline mt-3 block w-fit text-sm font-medium">
+                      {link.label} →
+                    </a>
+                  )}
+                </dd>
               </div>
             ))}
           </dl>
@@ -119,19 +126,17 @@ export default function App() {
           <hr className="border-rule" />
         </div>
 
-        <Section id="writing" index="03" kicker="Writing" title="Latest from the blog">
+        <Section id="writing" index="03" title="Latest articles">
           <Writing />
         </Section>
 
         <section id="contact" className="band scroll-mt-20 py-24 md:py-32" aria-labelledby="contact-title">
           <div className="mx-auto max-w-6xl px-5 md:px-8">
             <p className="mb-3 font-mono text-xs opacity-60">
-              <span className="text-accent">04</span> · Contact
+              <span className="text-accent">04</span>
             </p>
             <h2 id="contact-title" className="font-display text-[clamp(3rem,10vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
-              Let’s build something
-              <br />
-              <em className="font-serif font-normal italic tracking-[-0.01em] text-accent">that lasts.</em>
+              Let’s <em className="font-serif font-normal italic tracking-[-0.01em] text-accent">talk.</em>
             </h2>
             <div className="mt-12 flex flex-col gap-4 text-lg sm:flex-row sm:items-center sm:gap-10">
               <a href={`mailto:${profile.email}`} className="link-underline w-fit break-all">
