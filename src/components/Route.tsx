@@ -61,7 +61,11 @@ export function Route() {
                       key={role.id}
                       onMouseEnter={() => setActiveId(role.id)}
                       onMouseLeave={() => setActiveId(null)}
-                      className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5"
+                      onFocus={() => setActiveId(role.id)}
+                      onBlur={() => setActiveId(null)}
+                      onClick={() => setActiveId(role.id)}
+                      tabIndex={0}
+                      className="rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5"
                     >
                       <span className={`relative transition-colors ${active ? 'text-accent' : 'text-ink'}`}>
                         <span
