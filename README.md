@@ -1,73 +1,41 @@
-# React + TypeScript + Vite
+# personal-site
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal site of Morgan Perre, designed as a generative topographic map: the hero is a seeded contour map that can be regenerated, and the career is read as a trail (route log plus elevation profile).
 
-Currently, two official plugins are available:
+Stack: Vite, React 19, TypeScript, Tailwind CSS v4.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting started
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # dev server with HMR
+npm run build    # type-check (tsc -b) + production build into dist/
+npm run lint     # ESLint
+npm run preview  # serve the production build locally
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Editing content
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Everything the site says lives in `src/content.ts`:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `profile`: name, headline, pitch, status, contact links, location.
+- `legs`: organisations (work or study), most recent first, each with `roles` (oldest first).
+
+Each `Role` has an `elevation` (0 to 1) that sets its height on the career elevation profile. Roles are flattened across all legs and sorted automatically by `start`, so you never order or lay out the profile by hand: add a role with an `elevation` and it appears in both the profile and the route log (linked by `Role.id`). Omit `end` for the current role.
+
+## Architecture
+
+- `src/lib/terrain.ts`: seeded PRNG builds a heightfield (gaussian hills plus low-frequency ridging); contour lines are extracted with marching squares. Same seed, same map.
+- `src/components/TopoMap.tsx`: renders the contours as SVG, memoised on `seed`, with a draw-in animation that replays on regenerate.
+- `src/components/ElevationProfile.tsx`: career drawn as a trail profile; checkpoints are evenly spaced stages, heights come from `Role.elevation`.
+- `src/components/Route.tsx`: chronological route log, synced with the profile by role id.
+- `src/components/ThemeToggle.tsx`: light/dark switch.
+- `Hero.tsx`, `TrailBlaze.tsx`: page sections and decoration.
+
+## Theming
+
+Colours are CSS custom properties (`--paper`, `--ink`, `--accent`, ...) defined in `src/index.css`; components never hard-code theme colours. Dark values apply via `prefers-color-scheme` unless overridden by `data-theme="light"` on `<html>`, and `data-theme="dark"` forces dark. `ThemeToggle` sets `data-theme` and persists the choice in `localStorage` under the key `theme` (storage failures are tolerated). The contact band stays dark in both themes.
+
+## Deployment
+
+`.github/workflows/deploy.yml` builds with Node 20 and deploys `dist/` to GitHub Pages on every push to `main` (or manually via workflow dispatch). `vite.config.ts` sets `base: '/personal-site/'`, so the site is served from `/personal-site/`; change it if the repository is renamed or a custom domain is used.
