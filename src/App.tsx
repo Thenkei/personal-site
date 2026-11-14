@@ -1,7 +1,8 @@
 import { Fragment, useState, type ReactNode } from 'react';
-import { offTrail, profile, toolkit } from './content';
+import { blog, offTrail, profile, toolkit } from './content';
 import { Hero } from './components/Hero';
 import { Route } from './components/Route';
+import { Writing } from './components/Writing';
 import { ThemeToggle } from './components/ThemeToggle';
 import { TrailBlaze } from './components/TrailBlaze';
 
@@ -12,6 +13,7 @@ const INITIAL_SEED = randomSeed();
 const NAV = [
   { href: '#route', label: 'Route' },
   { href: '#toolkit', label: 'Toolkit' },
+  { href: '#writing', label: 'Writing' },
   { href: '#contact', label: 'Contact' },
 ] as const;
 
@@ -113,10 +115,18 @@ export default function App() {
           </dl>
         </Section>
 
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <hr className="border-rule" />
+        </div>
+
+        <Section id="writing" index="03" kicker="Writing" title="Latest from the blog">
+          <Writing />
+        </Section>
+
         <section id="contact" className="band scroll-mt-20 py-24 md:py-32" aria-labelledby="contact-title">
           <div className="mx-auto max-w-6xl px-5 md:px-8">
             <p className="mb-3 font-mono text-xs opacity-60">
-              <span className="text-accent">03</span> · Contact
+              <span className="text-accent">04</span> · Contact
             </p>
             <h2 id="contact-title" className="font-display text-[clamp(3rem,10vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
               Let’s build something
@@ -129,6 +139,12 @@ export default function App() {
               </a>
               <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="link-underline w-fit">
                 LinkedIn ↗
+              </a>
+              <a href={profile.github} target="_blank" rel="noopener noreferrer" className="link-underline w-fit">
+                GitHub ↗
+              </a>
+              <a href={blog.url} className="link-underline w-fit">
+                Blog →
               </a>
             </div>
           </div>

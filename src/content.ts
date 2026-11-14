@@ -38,10 +38,41 @@ export const profile = {
   status: 'Open to strategic projects',
   email: 'morgan.perre@gmail.com',
   linkedin: 'https://www.linkedin.com/in/morgan-perre-15295782',
+  github: 'https://github.com/Thenkei',
   place: {
     label: "La Chapelle-d'Aurec, Haute-Loire",
     coords: '45.3°N · 4.2°E',
   },
+} as const;
+
+export const blog = {
+  url: 'https://thenkei.github.io/blog/',
+  /** Same origin as this site in production; only lists already-published posts. */
+  feed: 'https://thenkei.github.io/blog/rss.xml',
+  /** Shown when the feed is unreachable (local dev, blog down). Newest first. */
+  fallback: [
+    {
+      title: 'Would we make the same choice again?',
+      url: 'https://thenkei.github.io/blog/en/posts/data-platform-retrospective',
+      summary:
+        "Last episode of the series: what really paid off (Snowflake, dbt, Dagster assets), what costs more than expected, why orchestrator execution stays inside our infrastructure, what we would do differently, and a grid to decide whether a stack like ours makes sense for you.",
+      date: '2026-11-09',
+    },
+    {
+      title: "From Zero to Hero: Building RockFi's Product OS",
+      url: 'https://thenkei.github.io/blog/en/posts/ai-human-judgment-rockfi',
+      summary:
+        "How the Claude Code Challenges got good AI practices out of terminal histories, and how we then encoded them as plugins connecting discovery, design, and delivery, without ever handing the merge to an agent.",
+      date: '2026-07-10',
+    },
+    {
+      title: 'Fifteen Hours on the Trail du Saint-Jacques 100K',
+      url: 'https://thenkei.github.io/blog/en/posts/trail-saint-jacques-100k-2026',
+      summary:
+        "A personal race report from my first 100K at the Trail du Saint-Jacques: a difficult day, improvised friendships, an empty water supply, and a shared finish with Blandine.",
+      date: '2026-08-08',
+    },
+  ],
 } as const;
 
 /** Most recent first — that is the order the route log reads in. */
