@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
 import { offTrail, profile, toolkit } from './content';
 import { Hero } from './components/Hero';
 import { Route } from './components/Route';
@@ -82,14 +82,24 @@ export default function App() {
             </div>
             <div>
               <h3 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted">Stack</h3>
-              <ul className="flex flex-wrap gap-x-1.5 font-display text-3xl font-medium leading-snug tracking-[-0.03em] text-ink md:text-4xl">
-                {toolkit.stack.map((s, i) => (
-                  <li key={s}>
-                    {s}
-                    {i < toolkit.stack.length - 1 && <span className="text-accent">,</span>}
-                  </li>
+              <dl>
+                {toolkit.stack.map(({ group, items }) => (
+                  <div key={group} className="grid gap-x-6 gap-y-1 border-t border-rule py-4 sm:grid-cols-[8.5rem_1fr]">
+                    <dt className="pt-1.5 font-mono text-xs text-muted">{group}</dt>
+                    <dd className="font-display text-xl font-medium leading-snug tracking-[-0.02em] text-ink md:text-2xl">
+                      {items.map((item, i) => (
+                        <Fragment key={item}>
+                          {/* nowrap keeps "Amazon Bedrock," together; the space outside is the break point. */}
+                          <span className="whitespace-nowrap">
+                            {item}
+                            {i < items.length - 1 && <span className="text-accent">,</span>}
+                          </span>{' '}
+                        </Fragment>
+                      ))}
+                    </dd>
+                  </div>
                 ))}
-              </ul>
+              </dl>
             </div>
           </div>
 
