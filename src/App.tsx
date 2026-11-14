@@ -22,7 +22,7 @@ function Section({ id, index, kicker, title, children }: { id: string; index: st
         <p className="mb-3 font-mono text-xs text-muted">
           <span className="text-accent">{index}</span> · {kicker}
         </p>
-        <h2 id={`${id}-title`} className="mb-12 font-serif text-5xl leading-none text-ink md:mb-16 md:text-6xl">
+        <h2 id={`${id}-title`} className="mb-12 font-display text-5xl font-semibold leading-none tracking-[-0.04em] text-ink md:mb-16 md:text-6xl">
           {title}
         </h2>
         {children}
@@ -82,7 +82,7 @@ export default function App() {
             </div>
             <div>
               <h3 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted">Stack</h3>
-              <ul className="flex flex-wrap gap-x-1 font-serif text-3xl leading-snug text-ink md:text-4xl">
+              <ul className="flex flex-wrap gap-x-1.5 font-display text-3xl font-medium leading-snug tracking-[-0.03em] text-ink md:text-4xl">
                 {toolkit.stack.map((s, i) => (
                   <li key={s}>
                     {s}
@@ -108,10 +108,10 @@ export default function App() {
             <p className="mb-3 font-mono text-xs opacity-60">
               <span className="text-accent">03</span> · Contact
             </p>
-            <h2 id="contact-title" className="font-serif text-[clamp(3rem,10vw,7.5rem)] leading-[0.95]">
+            <h2 id="contact-title" className="font-display text-[clamp(3rem,10vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
               Let’s build something
               <br />
-              <em className="text-accent">that lasts.</em>
+              <em className="font-serif font-normal italic tracking-[-0.01em] text-accent">that lasts.</em>
             </h2>
             <div className="mt-12 flex flex-col gap-4 text-lg sm:flex-row sm:items-center sm:gap-10">
               <a href={`mailto:${profile.email}`} className="link-underline w-fit break-all">

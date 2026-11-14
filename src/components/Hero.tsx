@@ -22,10 +22,10 @@ export function Hero({ seed, onRegenerate }: Props) {
           {profile.status}
         </p>
 
-        <h1 id="hero-title" className="font-serif text-[clamp(3.75rem,13vw,10rem)] leading-[0.88] tracking-[-0.02em] text-ink">
+        <h1 id="hero-title" className="font-display text-[clamp(3.75rem,13vw,10rem)] font-semibold leading-[0.88] tracking-[-0.05em] text-ink">
           {profile.name.first}
           <br />
-          <em className="text-accent">{profile.name.last}</em>
+          <em className="font-serif font-normal italic tracking-[-0.01em] text-accent">{profile.name.last}</em>
         </h1>
 
         <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-2 md:text-xl">

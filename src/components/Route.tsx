@@ -52,7 +52,7 @@ export function Route() {
             </div>
 
             <div>
-              <h3 className="font-serif text-3xl leading-tight text-ink md:text-4xl">{leg.org}</h3>
+              <h3 className="font-display text-3xl font-semibold leading-tight tracking-[-0.035em] text-ink md:text-4xl">{leg.org}</h3>
               <ul className="mt-3 space-y-1">
                 {[...leg.roles].reverse().map((role) => {
                   const active = role.id === activeId;
