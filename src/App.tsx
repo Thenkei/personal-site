@@ -1,256 +1,138 @@
-import { motion } from 'framer-motion';
-import { Mail, Linkedin, MapPin, Binary, Briefcase, GraduationCap, Code2, Globe2, Bike } from 'lucide-react';
+import { useState, type ReactNode } from 'react';
+import { offTrail, profile, toolkit } from './content';
+import { Hero } from './components/Hero';
+import { Route } from './components/Route';
+import { ThemeToggle } from './components/ThemeToggle';
+import { TrailBlaze } from './components/TrailBlaze';
 
-const App = () => {
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  };
+const randomSeed = () => Math.floor(Math.random() * 9000) + 1000;
+/** Every visit gets its own map. Module scope keeps render pure. */
+const INITIAL_SEED = randomSeed();
 
-  const experience = [
-    {
-      company: "RockFi",
-      role: "Staff Engineer",
-      period: "novembre 2024 - Present",
-      description: "Building a new private management experience. Interconnecting with key partners to design future-proof, scalable private banking solutions leveraging AI and innovative technologies.",
-      tech: ["Strategic Vision", "Technical Expertise", "AI Integration"]
-    },
-    {
-      company: "Forest Admin",
-      role: "Both Software Engineering Manager and Staff Software Engineer",
-      period: "juin 2024 - novembre 2024",
-      description: "Managing engineering teams and aligning technical roadmaps with business goals.",
-      tech: ["Management", "Roadmap Planning"]
-    },
-    {
-      company: "Forest Admin",
-      role: "Staff Software Engineer",
-      period: "janvier 2024 - novembre 2024",
-      description: "Leadership and development role in a company helping enterprises accelerate business by building internal tools.",
-      tech: ["Node.js", "TypeScript", "Internal Tools"]
-    },
-    {
-      company: "Forest Admin",
-      role: "Senior Software Engineer",
-      period: "janvier 2023 - janvier 2024",
-      description: "Deep dive into complex technical challenges for building internal tool platforms.",
-      tech: ["PostgreSQL", "Redis", "AWS"]
-    }
-  ];
+const NAV = [
+  { href: '#route', label: 'Route' },
+  { href: '#toolkit', label: 'Toolkit' },
+  { href: '#contact', label: 'Contact' },
+] as const;
+
+function Section({ id, index, kicker, title, children }: { id: string; index: string; kicker: string; title: string; children: ReactNode }) {
+  return (
+    <section id={id} className="scroll-mt-20 py-20 md:py-28" aria-labelledby={`${id}-title`}>
+      <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <p className="mb-3 font-mono text-xs text-muted">
+          <span className="text-accent">{index}</span> · {kicker}
+        </p>
+        <h2 id={`${id}-title`} className="mb-12 font-serif text-5xl leading-none text-ink md:mb-16 md:text-6xl">
+          {title}
+        </h2>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+export default function App() {
+  const [seed, setSeed] = useState(INITIAL_SEED);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-slate-300 font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
-      {/* Background decoration */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-svh bg-paper text-ink">
+      <a href="#route" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-ink focus:px-3 focus:py-2 focus:text-paper">
+        Skip to content
+      </a>
 
-      <nav className="fixed top-0 w-full z-50 bg-[#0a0a0c]/80 backdrop-blur-md border-b border-white/5">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-blue-400 bg-clip-text text-transparent">MP.</span>
-          <div className="flex gap-8 text-sm font-medium">
-            <a href="#about" className="hover:text-indigo-400 transition-colors">About</a>
-            <a href="#experience" className="hover:text-indigo-400 transition-colors">Experience</a>
-            <a href="#skills" className="hover:text-indigo-400 transition-colors">Skills</a>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-5xl mx-auto px-6 pt-32 pb-20">
-        {/* Hero Section */}
-        <motion.section 
-          {...fadeIn}
-          className="mb-32"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-medium mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+      <header className="sticky top-0 z-40 border-b border-rule/70 bg-paper/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
+          <a href="#" className="flex items-center gap-3 text-sm font-medium text-ink" aria-label="Back to top">
+            <TrailBlaze />
+            <span className="hidden sm:inline">
+              {profile.name.first} {profile.name.last}
             </span>
-            Available for strategic projects
-          </div>
-          <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 tracking-tight leading-tight">
-            Morgan Perre
-          </h1>
-          <p className="text-xl md:text-2xl text-slate-400 max-w-2xl mb-8 leading-relaxed">
-            Staff Engineer @ <span className="text-indigo-400 font-semibold">RockFi</span>. 
-            Crafting high-performance, scalable solutions at the intersection of strategy and technical excellence.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <a href="mailto:morgan.perre@gmail.com" className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all flex items-center gap-2 shadow-lg shadow-indigo-500/20">
-              <Mail className="w-4 h-4" /> Say Hello
-            </a>
-            <a href="https://www.linkedin.com/in/morgan-perre-15295782" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-semibold border border-white/10 transition-all flex items-center gap-2">
-              <Linkedin className="w-4 h-4" /> LinkedIn
-            </a>
-          </div>
-        </motion.section>
-
-        {/* Info Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-32" id="about">
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm"
-          >
-            <MapPin className="w-6 h-6 text-indigo-400 mb-4" />
-            <h3 className="text-white font-semibold mb-2">Location</h3>
-            <p className="text-sm text-slate-400">La Chapelle d'Aurec, Auvergne-Rhône-Alpes, France</p>
-          </motion.div>
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm"
-          >
-            <Binary className="w-6 h-6 text-blue-400 mb-4" />
-            <h3 className="text-white font-semibold mb-2">Focus</h3>
-            <p className="text-sm text-slate-400">Software Architecture & Solution Design</p>
-          </motion.div>
-          <motion.div 
-            whileHover={{ y: -5 }}
-            className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm"
-          >
-            <Globe2 className="w-6 h-6 text-cyan-400 mb-4" />
-            <h3 className="text-white font-semibold mb-2">Languages</h3>
-            <p className="text-sm text-slate-400">Native French, Full Prof. English, Elementary IT, PT, ES</p>
-          </motion.div>
-        </section>
-
-        {/* Experience Section */}
-        <section id="experience" className="mb-32">
-          <div className="flex items-center gap-4 mb-12">
-            <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-              <Briefcase className="w-6 h-6 text-indigo-400" />
-            </div>
-            <h2 className="text-3xl font-bold text-white">Experience</h2>
-          </div>
-
-          <div className="space-y-12">
-            {experience.map((exp, idx) => (
-              <motion.div 
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="relative pl-8 before:absolute before:left-0 before:top-2 before:bottom-0 before:w-px before:bg-indigo-500/20"
-              >
-                <div className="absolute left-[-4px] top-2 w-2 h-2 rounded-full bg-indigo-500" />
-                <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
-                  <h3 className="text-xl font-bold text-white">{exp.role}</h3>
-                  <span className="text-sm font-medium px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400">
-                    {exp.period}
-                  </span>
-                </div>
-                <div className="text-indigo-400 font-medium mb-4">{exp.company}</div>
-                <p className="text-slate-400 leading-relaxed mb-6 max-w-3xl">
-                  {exp.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {exp.tech.map((t, i) => (
-                    <span key={i} className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-medium text-slate-300">
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </motion.div>
+          </a>
+          <nav className="flex items-center gap-1 sm:gap-4" aria-label="Main">
+            {NAV.map((item) => (
+              <a key={item.href} href={item.href} className="rounded-full px-2.5 py-1.5 text-sm text-ink-2 transition-colors hover:text-ink">
+                {item.label}
+              </a>
             ))}
-          </div>
-        </section>
-
-        {/* Skills Section */}
-        <section id="skills" className="mb-32">
-          <div className="flex items-center gap-4 mb-12">
-            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
-              <Code2 className="w-6 h-6 text-blue-400" />
-            </div>
-            <h2 className="text-3xl font-bold text-white">Skills</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-3xl bg-white/5 border border-white/10">
-              <h3 className="text-white font-bold mb-6 flex items-center gap-2 text-lg">
-                Core Competencies
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {["Software Industry", "Software Design", "Solution Architecture", "Team Leadership", "NLP", "3D Reconstruction"].map((skill) => (
-                  <span key={skill} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm hover:border-indigo-400/40 hover:bg-indigo-500/5 transition-all cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-            <div className="p-8 rounded-3xl bg-white/5 border border-white/10">
-              <h3 className="text-white font-bold mb-6 flex items-center gap-2 text-lg">
-                Technical Stack
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {["Node.js", "TypeScript", "PostgreSQL", "Redis", "Express", "Koa", "Fastify", "GraphQL", "Ember.js", "Docker", "AWS", "GitHub Actions"].map((skill) => (
-                  <span key={skill} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm hover:border-blue-400/40 hover:bg-blue-500/5 transition-all cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Education & Hobbies */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <section>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20">
-                <GraduationCap className="w-6 h-6 text-cyan-400" />
-              </div>
-              <h2 className="text-3xl font-bold text-white">Education</h2>
-            </div>
-            <div className="space-y-6">
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                <div className="text-cyan-400 font-bold mb-1">ISIMA Clermont-Ferrand</div>
-                <div className="text-white font-medium mb-1">Diplôme d'ingénieur, Informatique</div>
-                <div className="text-xs text-slate-500">2014 - 2017</div>
-              </div>
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
-                <div className="text-cyan-400 font-bold mb-1">IUT Imagerie Le Puy en Velay</div>
-                <div className="text-white font-medium mb-1">DUT Info & Imagerie Numérique</div>
-                <div className="text-xs text-slate-500">2012 - 2014</div>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                <Bike className="w-6 h-6 text-emerald-400" />
-              </div>
-              <h2 className="text-3xl font-bold text-white">Interests</h2>
-            </div>
-            <div className="p-8 rounded-3xl bg-emerald-500/5 border border-emerald-500/10 h-full">
-              <p className="text-slate-300 text-lg leading-relaxed italic">
-                "Outside of building high-scale software, I love exploring the outdoors. You'll find me doing Trails and Mountain biking during the weekends."
-              </p>
-            </div>
-          </section>
+            <ThemeToggle />
+          </nav>
         </div>
+      </header>
+
+      <main>
+        <Hero seed={seed} onRegenerate={() => setSeed(randomSeed())} />
+
+        <Section id="route" index="01" kicker="Route" title="The climb so far">
+          <Route />
+        </Section>
+
+        <div className="mx-auto max-w-6xl px-5 md:px-8">
+          <hr className="border-rule" />
+        </div>
+
+        <Section id="toolkit" index="02" kicker="Toolkit" title="What I carry">
+          <div className="grid gap-12 md:grid-cols-[1fr_2fr] md:gap-16">
+            <div>
+              <h3 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted">Practice</h3>
+              <ul className="space-y-2 text-lg text-ink">
+                {toolkit.practice.map((p) => (
+                  <li key={p}>{p}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="mb-4 font-mono text-xs uppercase tracking-widest text-muted">Stack</h3>
+              <ul className="flex flex-wrap gap-x-1 font-serif text-3xl leading-snug text-ink md:text-4xl">
+                {toolkit.stack.map((s, i) => (
+                  <li key={s}>
+                    {s}
+                    {i < toolkit.stack.length - 1 && <span className="text-accent">,</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <dl className="mt-20 grid gap-px overflow-hidden rounded-2xl border border-rule bg-rule md:grid-cols-3">
+            {offTrail.map(({ term, detail }) => (
+              <div key={term} className="bg-paper p-6">
+                <dt className="mb-2 font-mono text-xs uppercase tracking-widest text-muted">{term}</dt>
+                <dd className="leading-relaxed text-ink">{detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </Section>
+
+        <section id="contact" className="band scroll-mt-20 py-24 md:py-32" aria-labelledby="contact-title">
+          <div className="mx-auto max-w-6xl px-5 md:px-8">
+            <p className="mb-3 font-mono text-xs opacity-60">
+              <span className="text-accent">03</span> · Contact
+            </p>
+            <h2 id="contact-title" className="font-serif text-[clamp(3rem,10vw,7.5rem)] leading-[0.95]">
+              Let’s build something
+              <br />
+              <em className="text-accent">that lasts.</em>
+            </h2>
+            <div className="mt-12 flex flex-col gap-4 text-lg sm:flex-row sm:items-center sm:gap-10">
+              <a href={`mailto:${profile.email}`} className="link-underline w-fit break-all">
+                {profile.email}
+              </a>
+              <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="link-underline w-fit">
+                LinkedIn ↗
+              </a>
+            </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="border-t border-white/5 py-12">
-        <div className="max-w-5xl mx-auto px-6 flex flex-wrap items-center justify-between gap-8">
-          <div>
-            <div className="text-white font-bold text-xl mb-2">Morgan Perre</div>
-            <p className="text-sm text-slate-500">© 2026 Crafted with precision & style.</p>
-          </div>
-          <div className="flex gap-6">
-            <a href="mailto:morgan.perre@gmail.com" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
-              <Mail className="w-4 h-4" /> Email
-            </a>
-            <a href="https://www.linkedin.com/in/morgan-perre-15295782" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white transition-colors flex items-center gap-2">
-              <Linkedin className="w-4 h-4" /> LinkedIn
-            </a>
-          </div>
+      <footer className="band">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-ink/15 px-5 py-6 font-mono text-[11px] opacity-60 md:px-8">
+          <span>
+            © {new Date().getFullYear()} {profile.name.first} {profile.name.last}
+          </span>
+          <span>Terrain #{seed} · generated in your browser</span>
         </div>
       </footer>
     </div>
   );
-};
-
-export default App;
+}
