@@ -13,12 +13,6 @@ export function formatDate(date: PartialDate): string {
   return month ? `${month} ${year}` : year;
 }
 
-/** Compact form for tight axis labels: `2024-11` → `Nov ’24`, `2014` → `2014`. */
-export function formatShort(date: PartialDate): string {
-  const { year, month } = parse(date);
-  return month ? `${month} ’${year.slice(2)}` : year;
-}
-
 /** ISO day `2026-11-13` → `13 Nov 2026`. Empty string for anything unparseable. */
 export function formatDay(iso: string): string {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
