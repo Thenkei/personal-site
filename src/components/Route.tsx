@@ -87,6 +87,11 @@ export function Route() {
               </ul>
               {leg.summary && <p className="mt-4 max-w-2xl leading-relaxed text-ink-2">{leg.summary}</p>}
               {leg.tags && <p className="mt-4 font-mono text-xs text-muted">{leg.tags.join(' / ')}</p>}
+              {leg.link && (
+                <a href={leg.link.href} className="link-underline mt-4 inline-block text-sm font-medium text-ink">
+                  {leg.link.label} →
+                </a>
+              )}
             </div>
           </li>
         ))}

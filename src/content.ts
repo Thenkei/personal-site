@@ -24,6 +24,7 @@ export interface Leg {
   kind: 'work' | 'study';
   summary?: string;
   tags?: readonly string[];
+  link?: { label: string; href: string };
   /** Chronological, oldest first. */
   roles: readonly Role[];
 }
@@ -115,8 +116,9 @@ export const legs: readonly Leg[] = [
     org: 'Opla',
     kind: 'work',
     summary:
-      'Between AI research and product. With an AI researcher, I designed and built an NLP engine in JavaScript, from architecture to CI and deployment, then worked with the product team to integrate it.',
+      'Between AI research and product. With an AI researcher, I designed and built aice.js, an open-source NLP engine in JavaScript, from architecture to CI and deployment, then worked with the product team to integrate it.',
     tags: ['JavaScript', 'NLP'],
+    link: { label: 'aice.js on GitHub', href: 'https://github.com/Thenkei/aice.js' },
     roles: [{ id: 'opla', title: 'R&D Engineer, AI & NLP', start: '2019-04', end: '2019-10', elevation: 0.43 }],
   },
   {
