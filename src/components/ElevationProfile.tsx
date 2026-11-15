@@ -25,6 +25,8 @@ const BASE = 300;
 const MOON = { x: W - 40, y: 34, r: 22 } as const;
 /** Steepness of the forecast. Higher = flatter start, more violent finish. */
 const GROWTH = 5.5;
+/** Minimum distance between two axis labels, in viewBox units: phones, then `sm` and up. */
+const LABEL_GAP = { base: 110, sm: 48 } as const;
 
 interface Pt {
   x: number;
@@ -45,6 +47,24 @@ function smoothSegments(pts: readonly Pt[]): string[] {
     segs.push(`C${f(c1.x)},${f(c1.y)} ${f(c2.x)},${f(c2.y)} ${f(p2.x)},${f(p2.y)}`);
   }
   return segs;
+}
+
+/**
+ * Which axis labels to show at a given spacing. Walks from the right so the
+ * current checkpoint is always labelled, and skips a label equal to the last
+ * one shown (several roles can start the same year).
+ */
+function visibleLabels(xs: readonly number[], labels: readonly string[], gap: number): boolean[] {
+  const shown = xs.map(() => false);
+  let lastX = Infinity;
+  let lastLabel = '';
+  for (let i = xs.length - 1; i >= 0; i--) {
+    if (labels[i] === lastLabel || lastX - xs[i] < gap) continue;
+    shown[i] = true;
+    lastX = xs[i];
+    lastLabel = labels[i];
+  }
+  return shown;
 }
 
 /** Deterministic pseudo-noise in [-1, 1] — stable across renders, no PRNG state. */
@@ -103,7 +123,11 @@ export function ElevationProfile({ waypoints, activeId, currentId, onActive }: P
   }, [waypoints, step]);
 
   const last = points[points.length - 1];
-  const summary = waypoints.map((w) => w.label).join(', ');
+  const labels = useMemo(() => {
+    const xs = points.map((p) => p.x);
+    const text = waypoints.map((w) => w.label);
+    return { base: visibleLabels(xs, text, LABEL_GAP.base), sm: visibleLabels(xs, text, LABEL_GAP.sm) };
+  }, [points, waypoints]);
   const pct = (x: number, axis: number) => `${(x / axis) * 100}%`;
 
   return (
@@ -112,7 +136,7 @@ export function ElevationProfile({ waypoints, activeId, currentId, onActive }: P
         viewBox={`0 0 ${W} ${H}`}
         className="block h-auto w-full overflow-visible"
         role="img"
-        aria-label={`Career elevation profile with checkpoints: ${summary}, then a forecast heading for the moon`}
+        aria-label={`Career elevation profile, ${waypoints.length} checkpoints from ${waypoints[0].label} to today, then a forecast heading for the moon`}
       >
         <defs>
           <pattern id={hatchId} width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -217,10 +241,12 @@ export function ElevationProfile({ waypoints, activeId, currentId, onActive }: P
       <div className="relative mt-2 h-4" aria-hidden="true">
         {points.map((p, i) => {
           const { id, label } = waypoints[i];
+          if (!labels.sm[i]) return null;
+          const visibility = labels.base[i] ? '' : 'hidden sm:block';
           return (
             <span
               key={id}
-              className={`absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] tracking-tight tabular-nums transition-colors sm:text-[11px] sm:tracking-normal ${
+              className={`absolute top-0 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] tracking-tight tabular-nums transition-colors sm:text-[11px] sm:tracking-normal ${visibility} ${
                 id === activeId ? 'text-accent' : 'text-muted'
               }`}
               style={{ left: pct(p.x, W) }}

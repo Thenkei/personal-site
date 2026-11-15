@@ -16,8 +16,6 @@ export interface Role {
   end?: PartialDate;
   /** 0–1. Relative height on the career elevation profile. */
   elevation: number;
-  /** Short label for the profile when the year alone is ambiguous. */
-  marker?: string;
 }
 
 export interface Leg {
@@ -75,7 +73,11 @@ export const blog = {
   ],
 } as const;
 
-/** Most recent first — that is the order the route log reads in. */
+/**
+ * Most recent first — the order the route log reads in. The elevation profile
+ * walks it backwards (legs in reverse, roles as written), so overlapping
+ * periods such as an internship during a degree keep the order chosen here.
+ */
 export const legs: readonly Leg[] = [
   {
     id: 'rockfi',
@@ -91,31 +93,86 @@ export const legs: readonly Leg[] = [
     org: 'Forest Admin',
     kind: 'work',
     summary:
-      'Internal-tools platform that helps enterprises move faster. Grew from senior IC to staff, then ran engineering management alongside the staff role — aligning technical roadmaps with business goals.',
-    tags: ['Node.js', 'TypeScript', 'PostgreSQL', 'Redis', 'AWS'],
+      'Forest Admin builds internal tools for companies, from startups to large enterprises. I joined as a software engineer, became senior then staff, and from June 2024 I also managed the engineering team. The tech team doubled to more than 20 engineers while I was there.',
+    tags: ['Node.js', 'TypeScript', 'PostgreSQL', 'Redis', 'GraphQL', 'Ember.js', 'Elasticsearch', 'AWS'],
     roles: [
-      { id: 'fa-senior', title: 'Senior Software Engineer', start: '2023-01', end: '2024-01', elevation: 0.56 },
-      { id: 'fa-staff', title: 'Staff Software Engineer', start: '2024-01', end: '2024-11', elevation: 0.72 },
-      {
-        id: 'fa-em',
-        title: 'Engineering Manager & Staff Engineer',
-        start: '2024-06',
-        end: '2024-11',
-        elevation: 0.84,
-      },
+      { id: 'fa-engineer', title: 'Software Engineer', start: '2021-01', end: '2023-01', elevation: 0.52 },
+      { id: 'fa-senior', title: 'Senior Software Engineer', start: '2023-01', end: '2024-01', elevation: 0.62 },
+      { id: 'fa-staff', title: 'Staff Software Engineer', start: '2024-01', end: '2024-11', elevation: 0.74 },
+      { id: 'fa-em', title: 'Software Engineering Manager', start: '2024-06', end: '2024-11', elevation: 0.84 },
     ],
+  },
+  {
+    id: 'atos',
+    org: 'Atos',
+    kind: 'work',
+    summary:
+      "On assignment in Michelin's industrial IT team in Clermont-Ferrand. I built, simulated and deployed the applications that process and move raw materials in Michelin plants.",
+    roles: [{ id: 'atos', title: 'Analyst Developer, at Michelin', start: '2019-11', end: '2021-01', elevation: 0.46 }],
+  },
+  {
+    id: 'opla',
+    org: 'Opla',
+    kind: 'work',
+    summary:
+      'Between AI research and product. With an AI researcher, I designed and built an NLP engine in JavaScript, from architecture to CI and deployment, then worked with the product team to integrate it.',
+    tags: ['JavaScript', 'NLP'],
+    roles: [{ id: 'opla', title: 'R&D Engineer, AI & NLP', start: '2019-04', end: '2019-10', elevation: 0.43 }],
+  },
+  {
+    id: 'arkima',
+    org: 'Arkima',
+    kind: 'work',
+    summary: 'A three-month mission: an automated pipeline that turns CAD models into low-poly 3D meshes with precomputed textures, ready for the web.',
+    roles: [{ id: 'arkima', title: 'R&D Engineer', start: '2018-12', end: '2019-02', elevation: 0.38 }],
+  },
+  {
+    id: 'polymagine',
+    org: 'Polymagine',
+    kind: 'work',
+    summary:
+      'My first permanent job, at a five-person startup. Research and development on 3D: reconstruction from 2D plans, real-time mesh deformation, face scanning, biometric detection on 3D meshes, 3D printing and rendering. I also followed client projects.',
+    tags: ['3D reconstruction', 'Rendering'],
+    roles: [{ id: 'polymagine', title: 'R&D Engineer', start: '2017-10', end: '2018-11', elevation: 0.34 }],
+  },
+  {
+    id: 'michelin',
+    org: 'Michelin',
+    kind: 'work',
+    summary:
+      'I studied and rebuilt the CAD/CAM application that lays out the inserts of every Michelin tire curing mold, the parts that shape the tread grooves. From user needs and specifications to development and tests.',
+    tags: ['C++', 'CAA', 'CAD/CAM'],
+    roles: [{ id: 'michelin', title: 'Software Engineer', start: '2016-09', end: '2017-10', elevation: 0.28 }],
+  },
+  {
+    id: 'ufmg',
+    org: 'Universidade Federal de Minas Gerais',
+    kind: 'work',
+    summary:
+      'Research in Belo Horizonte, Brazil, on planning the expansion of electrical distribution networks. I built an alternative mixed-integer linear programming model in Java with CPLEX.',
+    tags: ['Java', 'CPLEX', 'MILP'],
+    roles: [{ id: 'ufmg', title: 'Research Assistant', start: '2016-04', end: '2016-08', elevation: 0.22 }],
   },
   {
     id: 'isima',
     org: 'ISIMA Clermont-Ferrand',
     kind: 'study',
-    roles: [{ id: 'isima', title: "Diplôme d'ingénieur, Computer Science", start: '2014', end: '2017', elevation: 0.26 }],
+    roles: [{ id: 'isima', title: "Diplôme d'ingénieur, Computer Science", start: '2014', end: '2017', elevation: 0.14 }],
+  },
+  {
+    id: 'aberystwyth',
+    org: 'Aberystwyth University',
+    kind: 'work',
+    summary:
+      'Research internship in Wales. With a PhD student, I built a light stage to capture the texture of human skin and reconstruct 3D models of heads. My first steps in electronics, with an Arduino.',
+    tags: ['Arduino', '3D reconstruction'],
+    roles: [{ id: 'aberystwyth', title: 'Research Assistant, internship', start: '2014-04', end: '2014-06', elevation: 0.18 }],
   },
   {
     id: 'iut',
     org: 'IUT Le Puy-en-Velay',
     kind: 'study',
-    roles: [{ id: 'iut', title: 'DUT, Computer Science & Digital Imaging', start: '2012', end: '2014', elevation: 0.1 }],
+    roles: [{ id: 'iut', title: 'DUT, Computer Science & Digital Imaging', start: '2012', end: '2014', elevation: 0.06 }],
   },
 ];
 

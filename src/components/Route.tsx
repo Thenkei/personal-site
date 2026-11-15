@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { legs, type Leg, type Role } from '../content';
-import { formatDate, formatRange, formatShort } from '../lib/dates';
+import { formatDate, formatRange } from '../lib/dates';
 import { ElevationProfile, type Waypoint } from './ElevationProfile';
 
 interface Checkpoint extends Waypoint {
@@ -20,10 +20,10 @@ export function Route() {
 
   const checkpoints = useMemo<Checkpoint[]>(
     () =>
-      legs
+      [...legs]
+        .reverse()
         .flatMap((leg) => leg.roles.map((role) => ({ role, org: leg.org })))
-        .sort((a, b) => a.role.start.localeCompare(b.role.start))
-        .map(({ role, org }) => ({ id: role.id, label: formatShort(role.start), elevation: role.elevation, role, org })),
+        .map(({ role, org }) => ({ id: role.id, label: role.start.slice(0, 4), elevation: role.elevation, role, org })),
     [],
   );
 
